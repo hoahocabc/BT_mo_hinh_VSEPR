@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang='vi'>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài tâp hóa học ABC</title>
+
+  <!-- Sử dụng Google Fonts cho giao diện hiện đại -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$']] },
+      chtml: { scale: 0.9 },
+      svg: { fontCache: 'global' }
+    };
+    function drop(ev) {
+      ev.preventDefault();
+      var data = ev.dataTransfer.getData("text");
+      var draggable = document.getElementById(data);
+      var dropZone = ev.target;
+      while (dropZone && !dropZone.classList.contains("dropzone") && dropZone.tagName !== "BODY") {
+        dropZone = dropZone.parentNode;
+      }
+      if (!dropZone) return;
+      var label = dropZone.querySelector(".drop-label");
+      if (label) {
+         if (label.nextSibling) {
+           dropZone.insertBefore(draggable, label.nextSibling);
+         } else {
+           dropZone.appendChild(draggable);
+         }
+      } else {
+         dropZone.appendChild(draggable);
+      }
+    }
+    function allowDrop(ev) { ev.preventDefault(); }
+    function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+  </script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .top-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+    }
+    .score-box {
+      background: #4CAF50;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 1.1em;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.8em;
+      color: #333;
+    }
+    .header h2 {
+      margin: 10px 0 0;
+      font-size: 1.2em;
+      color: #777;
+    }
+    .section {
+      margin-top: 30px;
+    }
+    .section h2 {
+      font-size: 1.4em;
+      margin-bottom: 20px;
+      color: #4285f4;
+    }
+    .question {
+      margin-bottom: 30px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #f2f2f2;
+    }
+    .question p {
+      margin: 0 0 10px 0;
+    }
+    .option {
+      margin: 5px 0;
+    }
+    .explanation {
+      margin-top: 10px;
+    }
+    button {
+      background: #4285f4;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+    button:hover { background: #307cf1; }
+    /* Drag and drop */
+    .drag-drop-container {
+      display: flex;
+      gap: 10px;
+    }
+    .drag-column, .drop-column {
+      flex: 1;
+      background: #fff;
+      border: 1px dashed #ccc;
+      padding: 10px;
+      border-radius: 4px;
+    }
+    .draggable-item {
+      background: #e8f0fe;
+      border: 1px solid #c6dafc;
+      padding: 8px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      cursor: move;
+      text-align: center;
+    }
+    .dropzone {
+      min-height: 50px;
+      border: 1px dashed #aaa;
+      margin: 5px 0;
+      border-radius: 4px;
+      padding: 10px;
+      text-align: center;
+    }
+    .drop-label {
+      font-weight: bold;
+      color: #555;
+    }
+    /* Updated CSS for blanks in Part IV */
+    .blank-container {
+      display: inline;
+    }
+    .blank-container input.auto-expand, .blank-container span {
+      white-space: normal;
+      min-width: 60px;
+      height: 25px;
+      font-size: 18px;
+      vertical-align: baseline;
+      box-sizing: border-box;
+      overflow-wrap: break-word;
+    }
+    mjx-container[jax="CHTML"][display="true"] {
+      margin-top: 0 !important;
+      margin-bottom: -1.5em !important;
+    }
+    /* Media query cho smartphone */
+    @media only screen and (max-width: 600px) {
+      body { padding: 10px; font-size: 16px; }
+      .container { padding: 15px; }
+      .header h1 { font-size: 1.8em; }
+      .header h2 { font-size: 1.2em; }
+      .score-box { font-size: 1em; padding: 8px 12px; }
+    }
+  </style>
+
+</head>
+<body>
+  <div class='container'>
+    <div class='top-row'><div class='score-box' id='scoreDisplay'>Tổng số điểm:</div></div>
+    <div class='header'><h1>BÀI TẬP MÔ HÌNH VSEPR</h1><h2>(HÓA HỌC ABC)</h2></div>
+<div class='section' id='part1' data-parttype='1'>
+<h2>Phần 1: Trắc nghiệm nhiều lựa chọn (có một phương án đúng)</h2>
+<div class='question' id='part1_q1'>
+<p><strong>Câu 1:</strong><br><br>Thuyết VSEPR (Valence Shell Electron Pair Repulsion) được hai nhà khoa học Ronald Gillespie và Ronald Nyholm hoàn thiện vào năm nào?</p>
+<div class='option'><label><input type='radio' name='part1_q1' value='A'> <strong>A.</strong>  1916</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='B'> <strong>B.</strong>  1939</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='C'> <strong>C.</strong>  1957</label></div>
+<div class='option'><label><input type='radio' name='part1_q1' value='D'> <strong>D.</strong>  1975</label></div>
+<div class='explanation' id='part1_q1_result' data-answer='C' data-solution='%20%3Cbr%3EGillespie%20v%C3%A0%20Nyholm%20%C4%91%E1%BB%81%20xu%E1%BA%A5t%20m%C3%B4%20h%C3%ACnh%20n%C3%A0y%20n%C4%83m%201957.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q2'>
+<p><strong>Câu 2:</strong><br><br>Vai trò chính của thuyết VSEPR là gì?</p>
+<div class='option'><label><input type='radio' name='part1_q2' value='A'> <strong>A.</strong>  Dự đoán khối lượng phân tử.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='B'> <strong>B.</strong>  Dự đoán hình dạng hình học của phân tử và ion đa nguyên tử.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='C'> <strong>C.</strong>  Xác định chính xác nhiệt độ sôi của chất.</label></div>
+<div class='option'><label><input type='radio' name='part1_q2' value='D'> <strong>D.</strong>  Giải thích sự phóng xạ của hạt nhân.</label></div>
+<div class='explanation' id='part1_q2_result' data-answer='B' data-solution='%20%3Cbr%3EVSEPR%20t%E1%BA%ADp%20trung%20v%C3%A0o%20c%E1%BA%A5u%20tr%C3%BAc%20kh%C3%B4ng%20gian%20c%E1%BB%A7a%20ph%C3%A2n%20t%E1%BB%AD.'></div>
+</div>
+<div class='question' id='part1_q3'>
+<p><strong>Câu 3:</strong><br><br>VSEPR là viết tắt của cụm từ nào?</p>
+<div class='option'><label><input type='radio' name='part1_q3' value='A'> <strong>A.</strong>  Valence Shell Electron Pair Repulsion</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='B'> <strong>B.</strong>  Valence Structure Electron Pair Reaction</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='C'> <strong>C.</strong>  Variable Shape Electron Pair Rule</label></div>
+<div class='option'><label><input type='radio' name='part1_q3' value='D'> <strong>D.</strong>  Valence Shell Energy Pair Repulsion</label></div>
+<div class='explanation' id='part1_q3_result' data-answer='A' data-solution='%20%3Cbr%3EVSEPR%20ngh%C4%A9a%20l%C3%A0%20%E2%80%9CL%E1%BB%B1c%20%C4%91%E1%BA%A9y%20gi%E1%BB%AFa%20c%C3%A1c%20c%E1%BA%B7p%20electron%20ho%C3%A1%20tr%E1%BB%8B%E2%80%9D.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q4'>
+<p><strong>Câu 4:</strong><br><br>Theo thuyết VSEPR, các cặp electron xung quanh nguyên tử trung tâm sẽ:</p>
+<div class='option'><label><input type='radio' name='part1_q4' value='A'> <strong>A.</strong>  Hút nhau để tạo liên kết bền.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='B'> <strong>B.</strong>  Đẩy nhau để cách xa nhau nhất có thể.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='C'> <strong>C.</strong>  Luôn nằm chồng lên nhau.</label></div>
+<div class='option'><label><input type='radio' name='part1_q4' value='D'> <strong>D.</strong>  Sắp xếp ngẫu nhiên.</label></div>
+<div class='explanation' id='part1_q4_result' data-answer='B' data-solution='%20%3Cbr%3EElectron%20c%C3%B9ng%20d%E1%BA%A5u%20n%C3%AAn%20%C4%91%E1%BA%A9y%20nhau%20%C4%91%E1%BB%83%20%C4%91%E1%BA%A1t%20tr%E1%BA%A1ng%20th%C3%A1i%20n%C4%83ng%20l%C6%B0%E1%BB%A3ng%20th%E1%BA%A5p%20nh%E1%BA%A5t.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q5'>
+<p><strong>Câu 5:</strong><br><br>Thứ tự lực đẩy nào sau đây là đúng? (KLK: miền electron tự do (hoặc electron riêng), LK: miền electron liên kết)</p>
+<div class='option'><label><input type='radio' name='part1_q5' value='A'> <strong>A.</strong>  KLK–KLK > KLK–LK > LK–LK</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='B'> <strong>B.</strong>  LK–LK > KLK–LK > KLK–KLK</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='C'> <strong>C.</strong>  KLK–LK > KLK–KLK > LK–LK</label></div>
+<div class='option'><label><input type='radio' name='part1_q5' value='D'> <strong>D.</strong>  KLK–KLK = KLK–LK = LK–LK</label></div>
+<div class='explanation' id='part1_q5_result' data-answer='A' data-solution='%20%3Cbr%3EC%E1%BA%B7p%20t%E1%BB%B1%20do%20%28KLK%29%20kh%C3%B4ng%20b%E1%BB%8B%20b%C3%B3%20bu%E1%BB%99c%20v%C3%A0%20kh%C3%B4ng%20b%E1%BB%8B%20k%C3%A9o%20gi%C3%A3n%20n%C3%AAn%20chi%E1%BA%BFm%20ch%E1%BB%97%20r%E1%BB%99ng%20v%C3%A0%20%C4%91%E1%BA%A9y%20m%E1%BA%A1nh%20nh%E1%BA%A5t.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q6'>
+<p><strong>Câu 6:</strong><br><br>Phân tử BeCl₂ có hình dạng gì?</p>
+<div class='option'><label><input type='radio' name='part1_q6' value='A'> <strong>A.</strong>  Gấp khúc</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='B'> <strong>B.</strong>  Tam giác phẳng</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='C'> <strong>C.</strong>  Đường thẳng</label></div>
+<div class='option'><label><input type='radio' name='part1_q6' value='D'> <strong>D.</strong>  Tứ diện</label></div>
+<div class='explanation' id='part1_q6_result' data-answer='C' data-solution='%20%3Cbr%3EBeCl%E2%82%82%20%28AX%E2%82%82E%E2%82%80%29%3A%202%20v%C3%B9ng%20electron%20%C4%91%E1%BA%A9y%20nhau%20180%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q7'>
+<p><strong>Câu 7:</strong><br><br>Trong phân tử BF₃, góc liên kết F–B–F lý tưởng là bao nhiêu?</p>
+<div class='option'><label><input type='radio' name='part1_q7' value='A'> <strong>A.</strong>  180°</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='B'> <strong>B.</strong>  120°</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='C'> <strong>C.</strong>  109,5°</label></div>
+<div class='option'><label><input type='radio' name='part1_q7' value='D'> <strong>D.</strong>  90°</label></div>
+<div class='explanation' id='part1_q7_result' data-answer='B' data-solution='%20%3Cbr%3EBF%E2%82%83%20%28AX%E2%82%83E%E2%82%80%29%3A%203%20v%C3%B9ng%20electron%20chia%20%C4%91%E1%BB%81u%20m%E1%BA%B7t%20ph%E1%BA%B3ng%20360%C2%B0%2F3%20%3D%20120%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q8'>
+<p><strong>Câu 8:</strong><br><br>Phân tử methane (CH₄) có dạng hình học gì?</p>
+<div class='option'><label><input type='radio' name='part1_q8' value='A'> <strong>A.</strong>  Tam giác phẳng</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='B'> <strong>B.</strong>  Tứ diện đều</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='C'> <strong>C.</strong>  Bát diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q8' value='D'> <strong>D.</strong>  Chóp tam giác</label></div>
+<div class='explanation' id='part1_q8_result' data-answer='B' data-solution='%20%3Cbr%3ECH%E2%82%84%20%28AX%E2%82%84E%E2%82%80%29%3A%204%20li%C3%AAn%20k%E1%BA%BFt%20%C4%91%C6%A1n%20h%C6%B0%E1%BB%9Bng%20v%E1%BB%81%204%20%C4%91%E1%BB%89nh%20t%E1%BB%A9%20di%E1%BB%87n.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q9'>
+<p><strong>Câu 9:</strong><br><br>Góc liên kết trong phân tử ammonia (NH₃) khoảng 107°, nhỏ hơn góc tứ diện lý tưởng (109,5°). Nguyên nhân là do:</p>
+<div class='option'><label><input type='radio' name='part1_q9' value='A'> <strong>A.</strong>  Nitrogen có độ âm điện thấp.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='B'> <strong>B.</strong>  Lực đẩy của cặp electron tự do trên N ép các liên kết N–H lại.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='C'> <strong>C.</strong>  Liên kết N–H là liên kết đôi.</label></div>
+<div class='option'><label><input type='radio' name='part1_q9' value='D'> <strong>D.</strong>  Phân tử có dạng đường thẳng.</label></div>
+<div class='explanation' id='part1_q9_result' data-answer='B' data-solution='%20%3Cbr%3EC%E1%BA%B7p%20KLK%20tr%C3%AAn%20N%20%C4%91%E1%BA%A9y%20m%E1%BA%A1nh%20l%C3%A0m%20thu%20h%E1%BA%B9p%20g%C3%B3c%20H%E2%80%93N%E2%80%93H%20xu%E1%BB%91ng%20107%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q10'>
+<p><strong>Câu 10:</strong><br><br>Phân tử nước (H₂O) có dạng hình học là:</p>
+<div class='option'><label><input type='radio' name='part1_q10' value='A'> <strong>A.</strong>  Đường thẳng</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='B'> <strong>B.</strong>  Tứ diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='C'> <strong>C.</strong>  Gấp khúc (chữ V)</label></div>
+<div class='option'><label><input type='radio' name='part1_q10' value='D'> <strong>D.</strong>  Tam giác phẳng</label></div>
+<div class='explanation' id='part1_q10_result' data-answer='C' data-solution='%20%3Cbr%3EH%E2%82%82O%20%28AX%E2%82%82E%E2%82%82%29%3A%20C%C3%B3%202%20c%E1%BA%B7p%20KLK%20%C4%91%E1%BA%A9y%20r%E1%BA%A5t%20m%E1%BA%A1nh%20khi%E1%BA%BFn%20ph%C3%A2n%20t%E1%BB%AD%20b%E1%BB%8B%20g%E1%BA%A5p%20kh%C3%BAc.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q11'>
+<p><strong>Câu 11:</strong><br><br>Số Steric (SN) của một nguyên tử được tính bằng:</p>
+<div class='option'><label><input type='radio' name='part1_q11' value='A'> <strong>A.</strong>  Số liên kết đơn + Số liên kết đôi.</label></div>
+<div class='option'><label><input type='radio' name='part1_q11' value='B'> <strong>B.</strong>  Số nguyên tử liên kết + Số cặp electron tự do trên nguyên tử đó.</label></div>
+<div class='option'><label><input type='radio' name='part1_q11' value='C'> <strong>C.</strong>  Tổng số electron hóa trị của phân tử.</label></div>
+<div class='option'><label><input type='radio' name='part1_q11' value='D'> <strong>D.</strong>  Số proton trong hạt nhân.</label></div>
+<div class='explanation' id='part1_q11_result' data-answer='B' data-solution='%20%3Cbr%3E%C4%90%C3%A2y%20l%C3%A0%20c%C3%B4ng%20th%E1%BB%A9c%20chu%E1%BA%A9n%20%C4%91%E1%BB%83%20x%C3%A1c%20%C4%91%E1%BB%8Bnh%20ki%E1%BB%83u%20lai%20h%C3%B3a%2Fh%C3%ACnh%20h%E1%BB%8Dc.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q12'>
+<p><strong>Câu 12:</strong><br><br>Phân tử CO₂ có hình dạng đường thẳng vì:</p>
+<div class='option'><label><input type='radio' name='part1_q12' value='A'> <strong>A.</strong>  Carbon còn 2 cặp electron tự do.</label></div>
+<div class='option'><label><input type='radio' name='part1_q12' value='B'> <strong>B.</strong>  Carbon không còn cặp electron tự do và có 2 vùng mật độ electron.</label></div>
+<div class='option'><label><input type='radio' name='part1_q12' value='C'> <strong>C.</strong>  Oxy đẩy các liên kết ra xa.</label></div>
+<div class='option'><label><input type='radio' name='part1_q12' value='D'> <strong>D.</strong>  Nó có liên kết ion.</label></div>
+<div class='explanation' id='part1_q12_result' data-answer='B' data-solution='%20%3Cbr%3E2%20li%C3%AAn%20k%E1%BA%BFt%20%C4%91%C3%B4i%20t%C3%ADnh%20l%C3%A0%202%20v%C3%B9ng%20electron%2C%20%C4%91%E1%BA%A9y%20nhau%20t%E1%BB%91i%20%C4%91a%20180%C2%B0.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q13'>
+<p><strong>Câu 13:</strong><br><br>Phân tử SO₂ có dạng gấp khúc vì nguyên tử Sulfur (S) còn dư:</p>
+<div class='option'><label><input type='radio' name='part1_q13' value='A'> <strong>A.</strong>  1 cặp electron tự do.</label></div>
+<div class='option'><label><input type='radio' name='part1_q13' value='B'> <strong>B.</strong>  2 cặp electron tự do.</label></div>
+<div class='option'><label><input type='radio' name='part1_q13' value='C'> <strong>C.</strong>  3 cặp electron tự do.</label></div>
+<div class='option'><label><input type='radio' name='part1_q13' value='D'> <strong>D.</strong>  Không còn cặp nào.</label></div>
+<div class='explanation' id='part1_q13_result' data-answer='A' data-solution='%20%3Cbr%3ES%20c%C3%B3%206%20e%20h%C3%B3a%20tr%E1%BB%8B%2C%20d%C3%B9ng%204%20e%20t%E1%BA%A1o%20li%C3%AAn%20k%E1%BA%BFt%2C%20c%C3%B2n%201%20c%E1%BA%B7p%20KLK%20b%E1%BA%BB%20cong%20ph%C3%A2n%20t%E1%BB%AD.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q14'>
+<p><strong>Câu 14:</strong><br><br>Hình dạng của phân tử PCl₅ là:</p>
+<div class='option'><label><input type='radio' name='part1_q14' value='A'> <strong>A.</strong>  Bát diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q14' value='B'> <strong>B.</strong>  Lưỡng chóp tam giác</label></div>
+<div class='option'><label><input type='radio' name='part1_q14' value='C'> <strong>C.</strong>  Chóp tứ giác</label></div>
+<div class='option'><label><input type='radio' name='part1_q14' value='D'> <strong>D.</strong>  Tứ diện</label></div>
+<div class='explanation' id='part1_q14_result' data-answer='B' data-solution='%20%3Cbr%3EPCl%E2%82%85%20%28AX%E2%82%85E%E2%82%80%29%3A%205%20v%C3%B9ng%20electron%20t%E1%BA%A1o%20d%E1%BA%A1ng%20l%C6%B0%E1%BB%A1ng%20ch%C3%B3p%20tam%20gi%C3%A1c.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q15'>
+<p><strong>Câu 15:</strong><br><br>Phân tử SF₆ có 6 liên kết S–F hướng về 6 đỉnh của một hình khối đều. Đó là hình gì?</p>
+<div class='option'><label><input type='radio' name='part1_q15' value='A'> <strong>A.</strong>  Tứ diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q15' value='B'> <strong>B.</strong>  Bát diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q15' value='C'> <strong>C.</strong>  Lưỡng chóp tam giác</label></div>
+<div class='option'><label><input type='radio' name='part1_q15' value='D'> <strong>D.</strong>  Hình lập phương</label></div>
+<div class='explanation' id='part1_q15_result' data-answer='B' data-solution='%20%3Cbr%3ESF%E2%82%86%20%28AX%E2%82%86E%E2%82%80%29%3A%206%20v%C3%B9ng%20electron%20t%E1%BA%A1o%20d%E1%BA%A1ng%20b%C3%A1t%20di%E1%BB%87n%20%C4%91%E1%BB%81u%20%28Octahedral%29.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q16'>
+<p><strong>Câu 16:</strong><br><br>Phân tử nào sau đây có cấu trúc hình cái bập bênh (Seesaw)?</p>
+<div class='option'><label><input type='radio' name='part1_q16' value='A'> <strong>A.</strong>  CH₄</label></div>
+<div class='option'><label><input type='radio' name='part1_q16' value='B'> <strong>B.</strong>  SF₄</label></div>
+<div class='option'><label><input type='radio' name='part1_q16' value='C'> <strong>C.</strong>  XeF₄</label></div>
+<div class='option'><label><input type='radio' name='part1_q16' value='D'> <strong>D.</strong>  SiCl₄</label></div>
+<div class='explanation' id='part1_q16_result' data-answer='B' data-solution='%20%3Cbr%3ESF%E2%82%84%20%28AX%E2%82%84E%29%3A%20C%C3%B3%201%20c%E1%BA%B7p%20KLK%20%E1%BB%9F%20v%E1%BB%8B%20tr%C3%AD%20x%C3%ADch%20%C4%91%E1%BA%A1o%20t%E1%BA%A1o%20h%C3%ACnh%20b%E1%BA%ADp%20b%C3%AAnh.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q17'>
+<p><strong>Câu 17:</strong><br><br>Phân tử XeF₄ có 4 liên kết và 2 cặp electron tự do. Hình dạng của nó là:</p>
+<div class='option'><label><input type='radio' name='part1_q17' value='A'> <strong>A.</strong>  Tứ diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q17' value='B'> <strong>B.</strong>  Vuông phẳng</label></div>
+<div class='option'><label><input type='radio' name='part1_q17' value='C'> <strong>C.</strong>  Bát diện</label></div>
+<div class='option'><label><input type='radio' name='part1_q17' value='D'> <strong>D.</strong>  Chóp tứ giác</label></div>
+<div class='explanation' id='part1_q17_result' data-answer='B' data-solution='%20%3Cbr%3EXeF%E2%82%84%20%28AX%E2%82%84E%E2%82%82%29%3A%202%20c%E1%BA%B7p%20KLK%20n%E1%BA%B1m%20%C4%91%E1%BB%91i%20di%E1%BB%87n%20nhau%2C%20gi%E1%BB%AF%204%20F%20tr%C3%AAn%20m%E1%BA%B7t%20ph%E1%BA%B3ng.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q18'>
+<p><strong>Câu 18:</strong><br><br>Phân tử nào sau đây có dạng hình chữ T (T-shaped)?</p>
+<div class='option'><label><input type='radio' name='part1_q18' value='A'> <strong>A.</strong>  BF₃</label></div>
+<div class='option'><label><input type='radio' name='part1_q18' value='B'> <strong>B.</strong>  ClF₃</label></div>
+<div class='option'><label><input type='radio' name='part1_q18' value='C'> <strong>C.</strong>  NH₃</label></div>
+<div class='option'><label><input type='radio' name='part1_q18' value='D'> <strong>D.</strong>  AlCl₃</label></div>
+<div class='explanation' id='part1_q18_result' data-answer='B' data-solution='%20%3Cbr%3EClF%E2%82%83%20%28AX%E2%82%83E%E2%82%82%29%3A%202%20c%E1%BA%B7p%20KLK%20%C3%A9p%203%20li%C3%AAn%20k%E1%BA%BFt%20th%C3%A0nh%20h%C3%ACnh%20ch%E1%BB%AF%20T.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q19'>
+<p><strong>Câu 19:</strong><br><br>Sắp xếp góc liên kết giảm dần: CH₄, NH₃, H₂O.</p>
+<div class='option'><label><input type='radio' name='part1_q19' value='A'> <strong>A.</strong>  CH₄ > NH₃ > H₂O</label></div>
+<div class='option'><label><input type='radio' name='part1_q19' value='B'> <strong>B.</strong>  H₂O > NH₃ > CH₄</label></div>
+<div class='option'><label><input type='radio' name='part1_q19' value='C'> <strong>C.</strong>  NH₃ > CH₄ > H₂O</label></div>
+<div class='option'><label><input type='radio' name='part1_q19' value='D'> <strong>D.</strong>  CH₄ = NH₃ = H₂O</label></div>
+<div class='explanation' id='part1_q19_result' data-answer='A' data-solution='%20%3Cbr%3ES%E1%BB%91%20c%E1%BA%B7p%20KLK%20t%C4%83ng%20%280%20%3C%201%20%3C%202%29%20l%C3%A0m%20g%C3%B3c%20li%C3%AAn%20k%E1%BA%BFt%20gi%E1%BA%A3m%20%28109%2C5%20%3E%20107%20%3E%20104%2C5%29.%3Cbr%3E'></div>
+</div>
+<div class='question' id='part1_q20'>
+<p><strong>Câu 20:</strong><br><br>Khi dự đoán hình học, liên kết đôi (C=O) được tính là bao nhiêu vùng mật độ electron?</p>
+<div class='option'><label><input type='radio' name='part1_q20' value='A'> <strong>A.</strong>  1 vùng</label></div>
+<div class='option'><label><input type='radio' name='part1_q20' value='B'> <strong>B.</strong>  2 vùng</label></div>
+<div class='option'><label><input type='radio' name='part1_q20' value='C'> <strong>C.</strong>  3 vùng</label></div>
+<div class='option'><label><input type='radio' name='part1_q20' value='D'> <strong>D.</strong>  Không tính</label></div>
+<div class='explanation' id='part1_q20_result' data-answer='A' data-solution='%20%3Cbr%3EM%E1%BB%8Di%20li%C3%AAn%20k%E1%BA%BFt%20%28%C4%91%C6%A1n%2C%20%C4%91%C3%B4i%2C%20ba%29%20gi%E1%BB%AFa%202%20nguy%C3%AAn%20t%E1%BB%AD%20ch%E1%BB%89%20t%C3%ADnh%20l%C3%A0%201%20h%C6%B0%E1%BB%9Bng%20%C4%91%E1%BA%A9y.%3Cbr%3E'></div>
+</div>
+</div>
+
+    <div style='text-align:center; margin-top:30px;'>
+      <button id='submitBtn' onclick='gradeQuiz();'>Nộp bài</button>
+    </div>
+    <script>
+      function gradeQuiz() {
+         let score = 0, total = 0;
+         document.querySelectorAll('.section').forEach(function(section) {
+           let partType = section.getAttribute('data-parttype');
+           section.querySelectorAll('.question').forEach(function(q) {
+             total++;
+             let qid = q.id;
+             let feedback = "";
+             if (partType === "1") {
+               let selected = q.querySelector('input[name="' + qid + '"]:checked');
+               let correct = q.querySelector('.explanation').getAttribute('data-answer');
+               if (!selected) {
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else if (selected.value === correct) {
+                 score++;
+                 feedback = '<span style="color:green;"><strong>Đúng (' + correct + ')</strong></span>';
+               } else {
+                 feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + correct + '</strong></span>';
+               }
+             } else if (partType === "2") {
+               let selectedList = q.querySelectorAll('input[name="' + qid + '"]:checked');
+               if (selectedList.length === 0) {
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer');
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + correct + '</strong></span>';
+               } else {
+                 let userAnswers = [];
+                 selectedList.forEach(function(el) { userAnswers.push(el.value); });
+                 let correct = q.querySelector('.explanation').getAttribute('data-answer').split(',');
+                 userAnswers.sort(); correct.sort();
+                 if (userAnswers.join() === correct.join()) {
+                   score++;
+                   feedback = '<span style="color:green;"><strong>Đúng (' + correct.join(',') + ')</strong></span>';
+                 } else {
+                   feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + correct.join(',') + '</strong></span>';
+                 }
+               }
+             } else if (partType === "3") {
+               let inputElem = document.getElementById(qid + '_input');
+               let userInput = inputElem.value.trim();
+               let correctData = q.querySelector('.explanation').getAttribute('data-answer');
+               let accepted = correctData.split('||').map(s => s.trim());
+               if (!userInput) {
+                 feedback = '<span style="color:red;"><strong>Bạn chưa trả lời. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+               } else {
+                 if (accepted.includes(userInput)) {
+                   score++;
+                   feedback = '<span style="color:green;"><strong>Đúng</strong></span>';
+                   inputElem.style.color = 'green';
+                 } else {
+                   feedback = '<span style="color:red;"><strong>Sai. Đáp án đúng: ' + accepted.join(' hoặc ') + '</strong></span>';
+                   inputElem.style.color = 'red';
+                 }
+                 inputElem.style.fontWeight = 'bold';
+                 inputElem.disabled = true;
+               }
+             } else if (partType === "4") {
+               let inputs = q.querySelectorAll('input.auto-expand');
+               let blankResults = [];
+               inputs.forEach(function(inp, index) {
+                 let accepted = inp.getAttribute('data-answer').split('||').map(s => s.trim());
+                 let userAnswer = inp.value.trim();
+                 if (userAnswer !== "") {
+                   if (accepted.includes(userAnswer)) {
+                     blankResults.push({blank: index+1, correct: true, answer: userAnswer, accepted: accepted});
+                   } else {
+                     blankResults.push({blank: index+1, correct: false, answer: userAnswer, accepted: accepted});
+                   }
+                 } else {
+                   blankResults.push({blank: index+1, answered: false, accepted: accepted});
+                 }
+               });
+               inputs.forEach(function(inp, index) {
+                 let res = blankResults[index];
+                 if (res.answered === false) { }
+                 else {
+                   let span = document.createElement('span');
+                   span.style.fontWeight = 'bold';
+                   if (res.correct) {
+                     span.style.color = 'green';
+                     span.textContent = res.answer;
+                   } else {
+                     span.style.color = 'red';
+                     span.textContent = res.answer;
+                   }
+                   inp.parentNode.replaceChild(span, inp);
+                 }
+               });
+               let wrongBlanks = [];
+               let unansweredBlanks = [];
+               blankResults.forEach(function(r) {
+                 if (r.answered === false) { unansweredBlanks.push(r.blank); }
+                 else if (!r.correct) { wrongBlanks.push(r.blank); }
+               });
+               if (wrongBlanks.length === 0 && unansweredBlanks.length === 0) {
+                 feedback = '<span style="color:green; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerList = "";
+                 blankResults.forEach(function(r) {
+                   answerList += r.blank + ') ' + r.accepted.join(', hoặc ') + '<br>';
+                 });
+                 feedback = '<span style="color:red; font-weight:bold;">Sai.';
+                 if (wrongBlanks.length > 0) {
+                   feedback += ' Bạn trả lời sai vị trí ' + wrongBlanks.join(', ') + '.';
+                 }
+                 if (unansweredBlanks.length > 0) {
+                   feedback += ' Bạn chưa trả lời vị trí ' + unansweredBlanks.join(', ') + '.';
+                 }
+                 feedback += '<br>Đáp án đúng là:<br>' + answerList + '</span>';
+               }
+             } else if (partType === "5") {
+               let correctForQuestion = true;
+               q.querySelectorAll('.dropzone').forEach(function(dropZone) {
+                 let expected = dropZone.getAttribute('data-expected').trim();
+                 let userItems = Array.from(dropZone.querySelectorAll('.draggable-item')).map(e => e.getAttribute('data-label')).sort();
+                 let expectedItems = expected ? expected.split(',').map(s => s.trim()).sort() : [];
+                 if (JSON.stringify(userItems) !== JSON.stringify(expectedItems)) {
+                   correctForQuestion = false;
+                 }
+               });
+               if (correctForQuestion) {
+                 feedback = '<span style="color:green; font-weight:bold;">Đúng</span>';
+                 score++;
+               } else {
+                 let answerPairs = q.querySelector('.explanation').getAttribute('data-answer-pairs');
+                 feedback = '<span style="color:red; font-weight:bold;">Sai. Đáp án đúng là:<br>' + answerPairs.replace(/ \|\| /g, "<br>") + '</span>';
+               }
+             }
+             let expl = q.querySelector('.explanation');
+             expl.innerHTML = feedback;
+             let encodedSolution = expl.getAttribute('data-solution');
+             let solution = encodedSolution ? decodeURIComponent(encodedSolution) : "";
+             let cleanedSolution = solution.replace(/<br\s*\/?>/gi, '').trim();
+             if (cleanedSolution !== "") {
+                 expl.innerHTML += '<div style="margin-top:10px;"><strong>Lời giải:</strong></div><div>' + solution + '</div>';
+             }
+             expl.style.display = "block";
+           });
+         });
+         document.getElementById('scoreDisplay').innerHTML = 'Tổng số điểm: ' + score + ' / ' + total;
+         document.querySelectorAll('input, select').forEach(function(inp) { inp.disabled = true; });
+         let sb = document.getElementById('submitBtn'); if(sb) sb.disabled = true;
+         MathJax.typesetPromise();
+      }
+    </script>
+  </div>
+</body>
+</html>
